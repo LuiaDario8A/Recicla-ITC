@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reciclaje App</title>
     <link rel="stylesheet" href="style.css">
-
-    <!-- Importar Firebase de manera correcta -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
-    <script defer src="script.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    
+    <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -19,13 +19,7 @@
     </header>
 
     <main>
-        <section id="scanner-section">
-            <h2>Escanear QR para Ingresar</h2>
-            <video id="qr-video" autoplay playsinline></video>
-            <div id="qr-result">Esperando escanear...</div>
-        </section>
-
-        <section id="classification-section" style="display:none;">
+        <section id="classification-section">
             <h2>Clasificación de Residuos</h2>
             <input type="file" id="imageInput" accept="image/*">
             <button onclick="classifyImage()">Clasificar Material</button>
@@ -36,5 +30,3 @@
 
 </body>
 </html>
-
-
