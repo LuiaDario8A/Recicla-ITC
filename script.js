@@ -14,57 +14,57 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-// Función para iniciar sesión
-function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            window.location.href = "index.html"; // Redirigir al usuario a la página principal
-        })
-        .catch((error) => {
-            alert("Error: " + error.message);
-        });
-}
-
-// Función para registrar un nuevo usuario
-function register() {
-    const email = document.getElementById("register-email").value;
-    const password = document.getElementById("register-password").value;
-
-    auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            db.ref('usuarios/' + user.uid).set({
-                email: user.email,
-                createdAt: new Date().toISOString()
-            });
-            alert("Registro exitoso. Ahora inicia sesión.");
-            showLogin();
-        })
-        .catch((error) => {
-            alert("Error: " + error.message);
-        });
-}
+// Verificar si el usuario está autenticado
+auth.onAuthStateChanged(user => {
+    if (!user) {
+        window.location.href = "login.html"; // Redirige al login si no está autenticado
+    }
+});
 
 // Función para cerrar sesión
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "login.html";
-    }).catch((error) => {
-        alert("Error al cerrar sesión");
     });
 }
 
-// Función para cambiar entre login y registro
-function showRegister() {
-    document.getElementById("login-section").style.display = "none";
-    document.getElementById("register-section").style.display = "block";
+// Función para activar la cámara
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            document.getElementById('camera').srcObject = stream;
+        })
+        .catch(error => {
+            console.error("Error al acceder a la cámara: ", error);
+        });
 }
 
-function showLogin() {
-    document.getElementById("login-section").style.display = "block";
-    document.getElementById("register-section").style.display = "none";
+// Función para clasificar la basura
+function classifyImage() {
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Debes iniciar sesión para clasificar residuos.");
+        return;
+    }
+
+    const materials = ["Papel", "Plástico", "Metal"];
+    const material = materials[Math.floor(Math.random() * materials.length)];
+
+    document.getElementById("result").textContent = `Resultado: ${material}`;
+    let bin = material === "Papel" ? "Papelera Azul" :
+              material === "Plástico" ? "Papelera Amarilla" :
+              "Papelera Roja";
+
+    document.getElementById("suggestion").textContent = `Bótalo en: ${bin}`;
+
+    // Guardar en Firebase
+    db.ref(`usuarios/${user.uid}/residuos`).push({
+        material,
+        bin,
+        timestamp: new Date().toISOString()
+    });
 }
+
+// Iniciar la cámara al cargar la página
+window.onload = startCamera;
 
