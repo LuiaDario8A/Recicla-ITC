@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reciclaje App</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <h1>Reciclaje Inteligente</h1>
+    </header>
+
+    <main>
+        <section id="classification-section">
+            <h2>Clasificación de Residuos</h2>
+            <video id="camera" autoplay playsinline></video>
+            <button id="capture-btn">Clasificar Material</button>
+            <p id="classification-result">Resultado: -</p>
+            <p id="bin-suggestion">Sugerencia: -</p>
+        </section>
+    </main>
+
+</body>
+</html>
+
+
