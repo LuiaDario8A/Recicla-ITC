@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reciclaje Inteligente</title>
+    <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Reciclaje Inteligente</h1>
+    <h2>Iniciar Sesión</h2>
 
-    <div id="loginSection">
-        <h2>Iniciar Sesión</h2>
-        <input type="email" id="email" placeholder="Correo">
-        <input type="password" id="password" placeholder="Contraseña">
-        <button id="loginBtn">Iniciar Sesión</button>
-        <p>¿No tienes cuenta? <a href="register.html">Regístrate</a></p>
-    </div>
+    <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Correo" required>
+        <input type="password" id="loginPassword" placeholder="Contraseña" required>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
 
-    <div id="appSection" style="display: none;">
-        <button id="logoutBtn">Cerrar Sesión</button>
-        <h2>Bienvenido</h2>
-        <p>Aquí irá la funcionalidad de la cámara.</p>
-    </div>
+    <p>¿No tienes cuenta? <a href="register.html">Regístrate</a></p>
 
-    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
     <script src="index.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
