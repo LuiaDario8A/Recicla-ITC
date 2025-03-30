@@ -9,62 +9,81 @@ const firebaseConfig = {
     appId: "TU_APP_ID"
 };
 
-// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-// Verificar si el usuario está autenticado
-auth.onAuthStateChanged(user => {
-    if (!user) {
-        window.location.href = "login.html"; // Redirige al login si no está autenticado
+document.addEventListener("DOMContentLoaded", () => {
+    const authSection = document.getElementById("auth-section");
+    const classificationSection = document.getElementById("classification-section");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // Verifica si el usuario está autenticado
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            authSection.style.display = "none";
+            classificationSection.style.display = "block";
+            logoutBtn.style.display = "block";
+            startCamera();
+        } else {
+            authSection.style.display = "block";
+            classificationSection.style.display = "none";
+            logoutBtn.style.display = "none";
+        }
+    });
+
+    // Inicio de sesión
+    document.getElementById("login-btn").addEventListener("click", () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(error => alert(error.message));
+    });
+
+    // Cierre de sesión
+    logoutBtn.addEventListener("click", () => {
+        auth.signOut();
+    });
+
+    // Registro de usuario
+    const registerBtn = document.getElementById("register-btn");
+    if (registerBtn) {
+        registerBtn.addEventListener("click", () => {
+            const email = document.getElementById("reg-email").value;
+            const password = document.getElementById("reg-password").value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(() => alert("Usuario registrado"))
+                .catch(error => alert(error.message));
+        });
     }
 });
 
-// Función para cerrar sesión
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "login.html";
-    });
-}
-
-// Función para activar la cámara
+// Función para iniciar la cámara
 function startCamera() {
+    const video = document.getElementById("video");
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
-            document.getElementById('camera').srcObject = stream;
+            video.srcObject = stream;
         })
-        .catch(error => {
-            console.error("Error al acceder a la cámara: ", error);
-        });
+        .catch(err => console.error("Error al iniciar la cámara:", err));
 }
 
-// Función para clasificar la basura
-function classifyImage() {
-    const user = auth.currentUser;
-    if (!user) {
-        alert("Debes iniciar sesión para clasificar residuos.");
-        return;
-    }
-
+// Clasificación de residuos (simulación)
+document.getElementById("classify-btn").addEventListener("click", async () => {
     const materials = ["Papel", "Plástico", "Metal"];
     const material = materials[Math.floor(Math.random() * materials.length)];
+    document.getElementById("classification-result").textContent = `Resultado: ${material}`;
+    document.getElementById("bin-suggestion").textContent = `Bótalo en: ${material}`;
 
-    document.getElementById("result").textContent = `Resultado: ${material}`;
-    let bin = material === "Papel" ? "Papelera Azul" :
-              material === "Plástico" ? "Papelera Amarilla" :
-              "Papelera Roja";
-
-    document.getElementById("suggestion").textContent = `Bótalo en: ${bin}`;
-
-    // Guardar en Firebase
-    db.ref(`usuarios/${user.uid}/residuos`).push({
-        material,
-        bin,
-        timestamp: new Date().toISOString()
-    });
-}
-
-// Iniciar la cámara al cargar la página
-window.onload = startCamera;
+    // Guarda en Firebase
+    const user = auth.currentUser;
+    if (user) {
+        const recordRef = db.ref(`usuarios/${user.uid}/residuos`).push();
+        recordRef.set({
+            material,
+            bin: material,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
 
