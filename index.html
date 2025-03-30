@@ -3,31 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reciclaje Inteligente</title>
+    <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="style.css">
-
-    <!-- Firebase (Versión 8 para evitar errores de módulos) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <script src="script.js" defer></script>
 </head>
 <body>
 
     <header>
-        <h1>Reciclaje Inteligente</h1>
+        <h1>Bienvenido a Reciclaje Inteligente</h1>
     </header>
 
     <main>
-        <section id="classification-section">
-            <h2>Clasificación de Residuos</h2>
-            <video id="camera" autoplay playsinline></video>
-            <button id="capture-btn">Clasificar Material</button>
-            <p id="classification-result">Resultado: -</p>
-            <p id="bin-suggestion">Sugerencia: -</p>
-        </section>
+        <h2>Iniciar Sesión / Registrarse</h2>
+        <input type="email" id="email" placeholder="Correo electrónico">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="registerUser()">Registrarse</button>
+        <button onclick="loginUser()">Iniciar Sesión</button>
+        <p id="auth-message"></p>
     </main>
 
 </body>
 </html>
-
