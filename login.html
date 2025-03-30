@@ -7,31 +7,21 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="script.js" defer></script>
 </head>
 <body>
 
-    <header>
-        <h1>Iniciar Sesión</h1>
-    </header>
-
     <main>
-        <section id="login-section">
-            <h2>Accede a tu cuenta</h2>
-            <input type="email" id="email" placeholder="Correo electrónico">
-            <input type="password" id="password" placeholder="Contraseña">
-            <button onclick="login()">Iniciar Sesión</button>
-            <p>¿No tienes cuenta? <a href="#" onclick="showRegister()">Regístrate</a></p>
-        </section>
+        <h2>Iniciar Sesión</h2>
+        <input type="email" id="email" placeholder="Correo electrónico">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="login()">Iniciar Sesión</button>
 
-        <section id="register-section" style="display:none;">
-            <h2>Crear una cuenta</h2>
-            <input type="email" id="register-email" placeholder="Correo electrónico">
-            <input type="password" id="register-password" placeholder="Contraseña">
-            <button onclick="register()">Registrarse</button>
-            <p>¿Ya tienes cuenta? <a href="#" onclick="showLogin()">Inicia Sesión</a></p>
-        </section>
+        <h2>Registrarse</h2>
+        <input type="email" id="reg-email" placeholder="Correo electrónico">
+        <input type="password" id="reg-password" placeholder="Contraseña">
+        <button onclick="register()">Registrarse</button>
     </main>
 
+    <script src="login.js"></script>
 </body>
 </html>
