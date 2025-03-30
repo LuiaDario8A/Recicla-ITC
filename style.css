@@ -37,6 +37,13 @@ main {
     margin-top: 20px;
 }
 
+video {
+    width: 100%;
+    max-width: 300px;
+    border: 2px solid #155724;
+    border-radius: 5px;
+}
+
 button {
     background-color: #28a745;
     color: white;
