@@ -10,43 +10,74 @@ const firebaseConfig = {
     measurementId: "G-9WSCEYMJKW"
 };
 
+// Inicializar Firebase correctamente
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Iniciar cámara
-async function startCamera() {
-    const video = document.getElementById('camera');
+// --- QR Scanner ---
+let userId = null;
+
+async function scanQR() {
+    const video = document.getElementById('qr-video');
+    const resultDiv = document.getElementById('qr-result');
+
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         video.srcObject = stream;
+        video.play();
+        
+        // Aquí debes agregar la lógica para leer el QR con una librería como jsQR
+        resultDiv.textContent = "Escaneo activado. Esperando código...";
     } catch (error) {
-        console.error("Error al acceder a la cámara: ", error);
+        console.error("Error accediendo a la cámara:", error);
+        resultDiv.textContent = "No se pudo acceder a la cámara.";
     }
 }
 
-// Clasificación (Mock, debe conectarse a Teachable Machine)
-async function classifyImage() {
+// --- Clasificación de Imagen ---
+function classifyImage() {
+    const input = document.getElementById('imageInput');
     const result = document.getElementById('classification-result');
     const suggestion = document.getElementById('bin-suggestion');
-    
-    const materials = ["Papel", "Plástico", "Metal"];
-    const material = materials[Math.floor(Math.random() * materials.length)];
 
-    result.textContent = `Resultado: ${material}`;
-    suggestion.textContent = `Bótalo en: ${material}`;
+    if (input.files.length === 0) {
+        alert('Sube una imagen de la basura');
+        return;
+    }
 
-    // Guardar en Firebase
-    const recordRef = db.ref(`usuarios/anonimo/residuos`).push();
-    recordRef.set({
-        material,
-        bin: material,
-        timestamp: new Date().toISOString()
-    });
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = async function (e) {
+        const imageUrl = e.target.result;
+        const material = await mockClassify(imageUrl);
+
+        result.textContent = `Resultado: ${material}`;
+        let bin = "Desconocido";
+        if (material === "Papel") bin = "Papel";
+        else if (material === "Plástico") bin = "Plásticos";
+        else if (material === "Metal") bin = "Metales";
+
+        suggestion.textContent = `Bótalo en: ${bin}`;
+
+        if (userId) {
+            const recordRef = db.ref(`usuarios/${userId}/residuos`).push();
+            recordRef.set({
+                material,
+                bin,
+                timestamp: new Date().toISOString()
+            });
+        }
+    };
+
+    reader.readAsDataURL(file);
 }
 
-// Ejecutar cámara al cargar
-window.onload = () => {
-    startCamera();
-    document.getElementById('capture-btn').addEventListener('click', classifyImage);
-};
+// Simulación de clasificación
+async function mockClassify(imageUrl) {
+    const materials = ["Papel", "Plástico", "Metal"];
+    return materials[Math.floor(Math.random() * materials.length)];
+}
+
+window.onload = scanQR;
 
