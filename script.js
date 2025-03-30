@@ -31,7 +31,7 @@ function classifyImage() {
     reader.onload = async function (e) {
         const imageUrl = e.target.result;
 
-        // Simulación de clasificación (sustituye con Teachable Machine real)
+        // Aquí se conectaría con Teachable Machine (puedes adaptar este código según tu modelo)
         const material = await mockClassify(imageUrl);
 
         result.textContent = `Resultado: ${material}`;
@@ -42,8 +42,8 @@ function classifyImage() {
 
         suggestion.textContent = `Bótalo en: ${bin}`;
 
-        // Guardar en Firebase
-        const recordRef = db.ref(`usuarios/anonimo/residuos`).push();
+        // Guardar registro en Firebase
+        const recordRef = db.ref(`residuos`).push();
         recordRef.set({
             material,
             bin,
@@ -54,7 +54,7 @@ function classifyImage() {
     reader.readAsDataURL(file);
 }
 
-// Simulación de clasificación
+// Simulación de clasificación (sustituye con Teachable Machine real)
 async function mockClassify(imageUrl) {
     const materials = ["Papel", "Plástico", "Metal"];
     return materials[Math.floor(Math.random() * materials.length)];
