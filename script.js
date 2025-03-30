@@ -14,26 +14,33 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- Clasificación de Imagen ---
+// --- Activar cámara ---
+async function startCamera() {
+    const video = document.getElementById('video');
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        video.srcObject = stream;
+    } catch (error) {
+        console.error("Error al acceder a la cámara: ", error);
+        alert("No se pudo acceder a la cámara. Verifica los permisos.");
+    }
+}
+
+// --- Capturar imagen y clasificar ---
 function classifyImage() {
-    const input = document.getElementById('imageInput');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
     const result = document.getElementById('classification-result');
     const suggestion = document.getElementById('bin-suggestion');
 
-    if (input.files.length === 0) {
-        alert('Sube una imagen de la basura');
-        return;
-    }
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const file = input.files[0];
-    const reader = new FileReader();
+    const imageUrl = canvas.toDataURL('image/png');
 
-    reader.onload = async function (e) {
-        const imageUrl = e.target.result;
-
-        // Aquí se conectaría con Teachable Machine (puedes adaptar este código según tu modelo)
-        const material = await mockClassify(imageUrl);
-
+    mockClassify(imageUrl).then(material => {
         result.textContent = `Resultado: ${material}`;
         let bin = "Desconocido";
         if (material === "Papel") bin = "Papel";
@@ -42,16 +49,14 @@ function classifyImage() {
 
         suggestion.textContent = `Bótalo en: ${bin}`;
 
-        // Guardar registro en Firebase
+        // Guardar en Firebase
         const recordRef = db.ref(`residuos`).push();
         recordRef.set({
             material,
             bin,
             timestamp: new Date().toISOString()
         });
-    };
-
-    reader.readAsDataURL(file);
+    });
 }
 
 // Simulación de clasificación (sustituye con Teachable Machine real)
@@ -59,3 +64,7 @@ async function mockClassify(imageUrl) {
     const materials = ["Papel", "Plástico", "Metal"];
     return materials[Math.floor(Math.random() * materials.length)];
 }
+
+// Iniciar cámara al cargar la página
+window.onload = startCamera;
+
