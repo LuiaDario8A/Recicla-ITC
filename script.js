@@ -10,32 +10,72 @@ const firebaseConfig = {
     measurementId: "G-9WSCEYMJKW"
 };
 
-// Inicializar Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.database();
 
+// Manejo de sesión
+auth.onAuthStateChanged(user => {
+    if (user) {
+        if (window.location.pathname === "/index.html") {
+            window.location.href = "app.html";
+        }
+    } else {
+        if (window.location.pathname === "/app.html") {
+            window.location.href = "index.html";
+        }
+    }
+});
+
+function registerUser() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            const userId = userCredential.user.uid;
+            db.ref('usuarios/' + userId).set({
+                email: email,
+                intentos: 0
+            });
+            document.getElementById('auth-message').innerText = "Registro exitoso. Inicia sesión.";
+        })
+        .catch(error => {
+            document.getElementById('auth-message').innerText = error.message;
+        });
+}
+
+function loginUser() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    auth.signInWithEmailAndPassword(email, password)
+        .catch(error => {
+            document.getElementById('auth-message').innerText = error.message;
+        });
+}
+
+function logoutUser() {
+    auth.signOut();
+}
+
 // Activar la cámara
-const video = document.getElementById("camera");
-navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-    .then(stream => {
-        video.srcObject = stream;
-    })
-    .catch(err => {
-        console.error("Error al acceder a la cámara:", err);
-    });
+function startCamera() {
+    const video = document.getElementById('camera');
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => console.error("Error al activar la cámara:", err));
+}
 
-// Función para clasificar la imagen (simulada)
+// Clasificación de imagen (mock)
 function classifyImage() {
-    const result = document.getElementById("classification-result");
-    const suggestion = document.getElementById("bin-suggestion");
-
-    // Simulación de clasificación con IA
+    const result = document.getElementById('classification-result');
+    const suggestion = document.getElementById('bin-suggestion');
+    
     const materials = ["Papel", "Plástico", "Metal"];
     const material = materials[Math.floor(Math.random() * materials.length)];
-
     result.textContent = `Resultado: ${material}`;
+    
     let bin = "Desconocido";
     if (material === "Papel") bin = "Papel";
     else if (material === "Plástico") bin = "Plásticos";
@@ -43,15 +83,12 @@ function classifyImage() {
 
     suggestion.textContent = `Bótalo en: ${bin}`;
 
-    // Guardar en Firebase
-    const recordRef = db.ref(`usuarios/user123/residuos`).push();
-    recordRef.set({
-        material,
-        bin,
-        timestamp: new Date().toISOString()
-    });
+    const user = auth.currentUser;
+    if (user) {
+        db.ref(`usuarios/${user.uid}/residuos`).push({
+            material,
+            bin,
+            timestamp: new Date().toISOString()
+        });
+    }
 }
-
-// Agregar evento al botón
-document.getElementById("capture-btn").addEventListener("click", classifyImage);
-
