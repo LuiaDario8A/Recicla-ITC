@@ -32,12 +32,12 @@ main {
     max-width: 400px;
 }
 
-#classification-section {
+#scanner-section, #classification-section {
     text-align: center;
     margin-top: 20px;
 }
 
-#camera {
+#qr-video {
     width: 100%;
     max-width: 300px;
     border: 2px solid #155724;
@@ -62,3 +62,4 @@ button:hover {
     font-weight: bold;
     margin-top: 10px;
 }
+
