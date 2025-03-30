@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
+    <title>Reciclaje App</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
@@ -13,17 +13,37 @@
 <body>
 
     <header>
-        <h1>Bienvenido a Reciclaje Inteligente</h1>
+        <h1>Reciclaje Inteligente</h1>
+        <button onclick="logout()">Cerrar Sesión</button>
     </header>
 
     <main>
-        <h2>Iniciar Sesión / Registrarse</h2>
-        <input type="email" id="email" placeholder="Correo electrónico">
-        <input type="password" id="password" placeholder="Contraseña">
-        <button onclick="registerUser()">Registrarse</button>
-        <button onclick="loginUser()">Iniciar Sesión</button>
-        <p id="auth-message"></p>
+        <section id="scanner-section">
+            <h2>Escanear QR para Ingresar</h2>
+            <video id="qr-video"></video>
+            <div id="qr-result">Esperando escanear...</div>
+        </section>
+
+        <section id="classification-section" style="display:none;">
+            <h2>Clasificación de Residuos</h2>
+            <video id="camera" autoplay></video>
+            <button onclick="classifyImage()">Clasificar Material</button>
+            <p id="classification-result">Resultado: -</p>
+            <p id="bin-suggestion">Sugerencia: -</p>
+        </section>
     </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (!user) {
+                    window.location.href = "login.html"; // Redirige al login si no hay sesión
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
+
+
