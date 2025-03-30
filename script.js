@@ -1,34 +1,40 @@
-// Configurar Firebase
-const firebaseConfig = {
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_AUTH_DOMAIN",
-    projectId: "TU_PROJECT_ID",
-    storageBucket: "TU_STORAGE_BUCKET",
-    messagingSenderId: "TU_MESSAGING_SENDER_ID",
-    appId: "TU_APP_ID"
-};
+document.addEventListener("DOMContentLoaded", function() {
+    const registerForm = document.getElementById("registerForm");
+    const loginForm = document.getElementById("loginForm");
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+    if (registerForm) {
+        registerForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const email = document.getElementById("registerEmail").value;
+            const password = document.getElementById("registerPassword").value;
 
-// Elementos del DOM
-const registerEmail = document.getElementById("registerEmail");
-const registerPassword = document.getElementById("registerPassword");
-const registerBtn = document.getElementById("registerBtn");
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert("Cuenta creada con éxito");
+                    window.location.href = "index.html"; // Redirige al inicio de sesión
+                })
+                .catch((error) => {
+                    alert("Error: " + error.message);
+                });
+        });
+    }
 
-// Registro de usuario
-registerBtn.addEventListener("click", () => {
-    auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value)
-    .then(userCredential => {
-        console.log("Usuario registrado:", userCredential.user);
-        alert("Registro exitoso. Ahora inicia sesión.");
-        window.location.href = "index.html";
-    })
-    .catch(error => {
-        console.error("Error al registrar usuario:", error.message);
-        alert("Error: " + error.message);
-    });
+    if (loginForm) {
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const email = document.getElementById("loginEmail").value;
+            const password = document.getElementById("loginPassword").value;
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert("Inicio de sesión exitoso");
+                    window.location.href = "dashboard.html"; // Página después de iniciar sesión
+                })
+                .catch((error) => {
+                    alert("Error: " + error.message);
+                });
+        });
+    }
 });
 
 
