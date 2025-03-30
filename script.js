@@ -10,29 +10,9 @@ const firebaseConfig = {
     measurementId: "G-9WSCEYMJKW"
 };
 
-// Inicializar Firebase correctamente
+// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
-// --- QR Scanner ---
-let userId = null;
-
-async function scanQR() {
-    const video = document.getElementById('qr-video');
-    const resultDiv = document.getElementById('qr-result');
-
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-        video.srcObject = stream;
-        video.play();
-        
-        // Aquí debes agregar la lógica para leer el QR con una librería como jsQR
-        resultDiv.textContent = "Escaneo activado. Esperando código...";
-    } catch (error) {
-        console.error("Error accediendo a la cámara:", error);
-        resultDiv.textContent = "No se pudo acceder a la cámara.";
-    }
-}
 
 // --- Clasificación de Imagen ---
 function classifyImage() {
@@ -50,6 +30,8 @@ function classifyImage() {
 
     reader.onload = async function (e) {
         const imageUrl = e.target.result;
+
+        // Simulación de clasificación (sustituye con Teachable Machine real)
         const material = await mockClassify(imageUrl);
 
         result.textContent = `Resultado: ${material}`;
@@ -60,14 +42,13 @@ function classifyImage() {
 
         suggestion.textContent = `Bótalo en: ${bin}`;
 
-        if (userId) {
-            const recordRef = db.ref(`usuarios/${userId}/residuos`).push();
-            recordRef.set({
-                material,
-                bin,
-                timestamp: new Date().toISOString()
-            });
-        }
+        // Guardar en Firebase
+        const recordRef = db.ref(`usuarios/anonimo/residuos`).push();
+        recordRef.set({
+            material,
+            bin,
+            timestamp: new Date().toISOString()
+        });
     };
 
     reader.readAsDataURL(file);
@@ -78,6 +59,3 @@ async function mockClassify(imageUrl) {
     const materials = ["Papel", "Plástico", "Metal"];
     return materials[Math.floor(Math.random() * materials.length)];
 }
-
-window.onload = scanQR;
-
