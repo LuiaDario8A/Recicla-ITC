@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
+    <title>Reciclaje Inteligente</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 </head>
 <body>
 
-    <main>
-        <h2>Iniciar Sesión</h2>
-        <input type="email" id="email" placeholder="Correo electrónico">
-        <input type="password" id="password" placeholder="Contraseña">
-        <button onclick="login()">Iniciar Sesión</button>
+    <button onclick="logout()">Cerrar Sesión</button>
 
-        <h2>Registrarse</h2>
-        <input type="email" id="reg-email" placeholder="Correo electrónico">
-        <input type="password" id="reg-password" placeholder="Contraseña">
-        <button onclick="register()">Registrarse</button>
+    <main>
+        <h2>Clasificación de Residuos</h2>
+        <video id="camera" autoplay></video>
+        <button onclick="classifyImage()">Clasificar Material</button>
+        <p id="result">Resultado: -</p>
+        <p id="suggestion">Sugerencia: -</p>
     </main>
 
-    <script src="login.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
