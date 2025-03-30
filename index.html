@@ -3,32 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reciclaje Inteligente</title>
+    <title>Clasificación de Residuos</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
     <h1>Reciclaje Inteligente</h1>
-    <button id="logout-btn" style="display: none;">Cerrar Sesión</button>
+    <button id="logoutButton">Cerrar Sesión</button>
 
-    <div id="auth-section">
-        <h2>Iniciar Sesión</h2>
-        <input type="email" id="email" placeholder="Correo">
-        <input type="password" id="password" placeholder="Contraseña">
-        <button id="login-btn">Iniciar Sesión</button>
-        <p>¿No tienes cuenta? <a href="register.html">Regístrate</a></p>
-    </div>
+    <h2>Clasificación de Residuos</h2>
+    <video id="camera" autoplay></video>
+    <button id="captureButton">Escanear Residuo</button>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <p id="classificationResult"></p>
 
-    <div id="classification-section" style="display: none;">
-        <h2>Clasificación de Basura</h2>
-        <video id="video" autoplay></video>
-        <button id="classify-btn">Clasificar Basura</button>
-        <p id="classification-result"></p>
-        <p id="bin-suggestion"></p>
-    </div>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js"></script>
-    <script src="script.js"></script>
+    <!-- Script -->
+    <script src="index.js" defer></script>
+
 </body>
 </html>
