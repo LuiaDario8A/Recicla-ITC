@@ -1,4 +1,4 @@
-// Configuración de Firebase
+
 const firebaseConfig = {
     apiKey: "AIzaSyCfq6YcNfAfExWw3ChPDREw8U3oAKfKcSw",
     authDomain: "proyecto-rec-c048c.firebaseapp.com",
@@ -10,14 +10,14 @@ const firebaseConfig = {
     measurementId: "G-9WSCEYMJKW"
 };
 
-// Inicializar Firebase
+
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const auth = firebase.auth();
 const db = firebase.database();
 
-// Elementos del DOM
+
 const loginSection = document.getElementById("login-section");
 const registerSection = document.getElementById("register-section");
 const classificationSection = document.getElementById("classification-section");
@@ -26,7 +26,7 @@ const loginBtn = document.getElementById("login-btn");
 const registerBtn = document.getElementById("register-btn");
 const logoutBtn = document.getElementById("logout-btn");
 
-// Mostrar formularios
+
 document.getElementById("show-register").addEventListener("click", () => {
     loginSection.style.display = "none";
     registerSection.style.display = "block";
@@ -36,7 +36,7 @@ document.getElementById("show-login").addEventListener("click", () => {
     loginSection.style.display = "block";
 });
 
-// Registro de usuario
+
 registerBtn.addEventListener("click", () => {
     const email = document.getElementById("register-email").value;
     const password = document.getElementById("register-password").value;
@@ -50,7 +50,7 @@ registerBtn.addEventListener("click", () => {
         .catch(error => alert(error.message));
 });
 
-// Inicio de sesión
+
 loginBtn.addEventListener("click", () => {
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
@@ -63,7 +63,7 @@ loginBtn.addEventListener("click", () => {
         .catch(error => alert(error.message));
 });
 
-// Cerrar sesión
+
 logoutBtn.addEventListener("click", () => {
     auth.signOut().then(() => {
         classificationSection.style.display = "none";
@@ -71,7 +71,7 @@ logoutBtn.addEventListener("click", () => {
     });
 });
 
-// Estado de autenticación
+
 auth.onAuthStateChanged(user => {
     if (user) {
         loginSection.style.display = "none";
@@ -84,7 +84,7 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-// Activar la cámara
+
 const video = document.getElementById("camera");
 navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
     .then(stream => {
@@ -94,12 +94,12 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
         console.error("Error al acceder a la cámara:", err);
     });
 
-// Función para clasificar la imagen (simulada)
+
 function classifyImage() {
     const result = document.getElementById("classification-result");
     const suggestion = document.getElementById("bin-suggestion");
 
-    // Simulación de clasificación con IA
+   
     const materials = ["Papel", "Plástico", "Metal"];
     const material = materials[Math.floor(Math.random() * materials.length)];
 
@@ -111,7 +111,7 @@ function classifyImage() {
 
     suggestion.textContent = `Bótalo en: ${bin}`;
 
-    // Guardar en Firebase si el usuario está autenticado
+    
     const user = auth.currentUser;
     if (user) {
         const recordRef = db.ref(`usuarios/${user.uid}/residuos`).push();
