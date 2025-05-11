@@ -1,4 +1,4 @@
-
+// Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyCfq6YcNfAfExWw3ChPDREw8U3oAKfKcSw",
     authDomain: "proyecto-rec-c048c.firebaseapp.com",
@@ -6,52 +6,41 @@ const firebaseConfig = {
     projectId: "proyecto-rec-c048c",
     storageBucket: "proyecto-rec-c048c.appspot.com",
     messagingSenderId: "369525260052",
-    appId: "1:369525260052:web:f376ed49de8e04e79d4c01",
-    measurementId: "G-9WSCEYMJKW"
+    appId: "1:369525260052:web:f376ed49de8e04e79d4c01"
 };
 
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-
+// UI
 const loginSection = document.getElementById("login-section");
 const registerSection = document.getElementById("register-section");
 const classificationSection = document.getElementById("classification-section");
-
-const loginBtn = document.getElementById("login-btn");
-const registerBtn = document.getElementById("register-btn");
-const logoutBtn = document.getElementById("logout-btn");
-
 
 document.getElementById("show-register").addEventListener("click", () => {
     loginSection.style.display = "none";
     registerSection.style.display = "block";
 });
+
 document.getElementById("show-login").addEventListener("click", () => {
     registerSection.style.display = "none";
     loginSection.style.display = "block";
 });
 
-
-registerBtn.addEventListener("click", () => {
+document.getElementById("register-btn").addEventListener("click", () => {
     const email = document.getElementById("register-email").value;
     const password = document.getElementById("register-password").value;
 
     auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            alert("Usuario registrado con éxito.");
+        .then(() => {
             registerSection.style.display = "none";
             classificationSection.style.display = "block";
         })
         .catch(error => alert(error.message));
 });
 
-
-loginBtn.addEventListener("click", () => {
+document.getElementById("login-btn").addEventListener("click", () => {
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
@@ -63,14 +52,12 @@ loginBtn.addEventListener("click", () => {
         .catch(error => alert(error.message));
 });
 
-
-logoutBtn.addEventListener("click", () => {
+document.getElementById("logout-btn").addEventListener("click", () => {
     auth.signOut().then(() => {
         classificationSection.style.display = "none";
         loginSection.style.display = "block";
     });
 });
-
 
 auth.onAuthStateChanged(user => {
     if (user) {
@@ -84,44 +71,54 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-
+// Cámara
 const video = document.getElementById("camera");
 navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-    .then(stream => {
-        video.srcObject = stream;
-    })
-    .catch(err => {
-        console.error("Error al acceder a la cámara:", err);
-    });
+    .then(stream => video.srcObject = stream)
+    .catch(err => console.error("Error al acceder a la cámara:", err));
 
+// Teachable Machine
+let model;
+const URL = "https://teachablemachine.withgoogle.com/models/rtP1yFVGq/";
 
-function classifyImage() {
-    const result = document.getElementById("classification-result");
-    const suggestion = document.getElementById("bin-suggestion");
+async function loadModel() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
+    model = await tmImage.load(modelURL, metadataURL);
+    console.log("Modelo cargado");
+}
+loadModel();
 
-   
-    const materials = ["Papel", "Plástico", "Metal"];
-    const material = materials[Math.floor(Math.random() * materials.length)];
+async function classifyImage() {
+    if (!model) {
+        alert("El modelo aún no se ha cargado.");
+        return;
+    }
 
-    result.textContent = `Resultado: ${material}`;
+    const prediction = await model.predict(video);
+    const topPrediction = prediction.sort((a, b) => b.probability - a.probability)[0];
+
+    const material = topPrediction.className;
     let bin = "Desconocido";
     if (material === "Papel") bin = "Papel";
     else if (material === "Plástico") bin = "Plásticos";
     else if (material === "Metal") bin = "Metales";
 
-    suggestion.textContent = `Bótalo en: ${bin}`;
+    document.getElementById("classification-result").textContent = `Resultado: ${material}`;
+    document.getElementById("bin-suggestion").textContent = `Bótalo en: ${bin}`;
 
-    
     const user = auth.currentUser;
     if (user) {
         const recordRef = db.ref(`usuarios/${user.uid}/residuos`).push();
         recordRef.set({
             material,
             bin,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            depositado: false
+        }).then(() => {
+            db.ref("cola_actual").set(user.uid);
         });
     }
 }
 
-// Agregar evento al botón
 document.getElementById("capture-btn").addEventListener("click", classifyImage);
